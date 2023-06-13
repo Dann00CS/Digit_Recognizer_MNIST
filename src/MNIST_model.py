@@ -13,18 +13,20 @@ class MNIST_model(nn.Module):
         self.conv2 = nn.Sequential(
             nn.Conv2d(16, 32, 5, padding="same"),
             nn.ReLU(),
-            nn.Dropout2d(p=0.1),
+            nn.Dropout2d(p=0.1)
             # nn.MaxPool2d(kernel_size=2)
         )
+        self.GAP = nn.AdaptiveAvgPool2d((1, 1))
         self.linear = nn.Sequential(
-            nn.Linear(32 * 28 * 28, 32),
-            nn.ReLU(),
-            nn.Linear(32, 10)
+            nn.Linear(32, 10),
+            # nn.ReLU(),
+            # nn.Linear(32, 10)
         )
 
     def forward(self, x):
         x = self.conv1(x)
         x = self.conv2(x)
+        x = self.GAP(x)
         x = torch.flatten(x, 1)
         x = self.linear(x)
         return x
